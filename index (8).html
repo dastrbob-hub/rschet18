@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор технолога • Покраска • Сварка • Мехобработка</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;display=swap');
+        
+        :root {
+            --primary: #10b981;
+        }
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .font-display {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-weight: 600;
+        }
+
+        .green-input {
+            background-color: #ecfdf5;
+            border: 1px solid #10b981;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .green-input:focus {
+            outline: none;
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+            background-color: #f0fdfa;
+        }
+
+        .tab-btn {
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        
+        .tab-btn.active {
+            color: #059669;
+            border-bottom: 3px solid #10b981;
+            font-weight: 600;
+        }
+
+        .section-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .section-card:hover {
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05);
+        }
+
+        .result-value {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .metric-label {
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .modern-table td, .modern-table th {
+            padding: 10px 14px;
+        }
+
+        .nav-active {
+            background-color: #ecfdf5;
+            color: #059669;
+            border-radius: 9999px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(145deg, #0f172a, #1e2937);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+    <!-- HEADER -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-screen-2xl mx-auto">
+            <div class="px-8 py-5 flex items-center justify-between">
+                <div class="flex items-center gap-x-4">
+                    <div class="w-11 h-11 bg-emerald-600 rounded-2xl flex items-center justify-center shadow-inner">
+                        <i class="fa-solid fa-calculator text-white text-3xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-display text-3xl font-semibold tracking-tighter text-slate-900">Калькулятор технолога</h1>
+                        <p class="text-[10px] text-emerald-600 -mt-1 font-medium tracking-[1.5px]">ПРОИЗВОДСТВЕННЫЕ РАСЧЕТЫ</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-x-3">
+                    <div class="hidden md:flex items-center bg-emerald-100 text-emerald-700 text-xs font-medium px-3.5 h-8 rounded-3xl">
+                        <i class="fa-solid fa-sync fa-spin mr-2 text-emerald-600"></i>
+                        <span>Автосохранение включено</span>
+                    </div>
+                    <div class="text-xs px-3 py-1.5 bg-white border border-slate-200 rounded-3xl text-slate-500 flex items-center gap-x-2">
+                        <i class="fa-solid fa-database text-emerald-500"></i>
+                        <span class="hidden sm:inline">localStorage</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- TABS -->
+    <div class="max-w-screen-2xl mx-auto px-8 pt-6">
+        <div class="flex items-center border-b border-slate-200">
+            <button onclick="switchTab('paint')" id="tab-btn-paint"
+                    class="tab-btn active px-7 py-3.5 text-base font-semibold flex items-center gap-x-2 border-b-2 border-emerald-600 text-emerald-600">
+                <i class="fa-solid fa-paint-brush"></i>
+                <span>Покраска</span>
+            </button>
+            <button onclick="switchTab('svarka')" id="tab-btn-svarka"
+                    class="tab-btn px-7 py-3.5 text-base font-semibold flex items-center gap-x-2 text-slate-600 hover:text-slate-900">
+                <i class="fa-solid fa-link"></i>
+                <span>Сварка</span>
+            </button>
+            <button onclick="switchTab('meh')" id="tab-btn-meh"
+                    class="tab-btn px-7 py-3.5 text-base font-semibold flex items-center gap-x-2 text-slate-600 hover:text-slate-900">
+                <i class="fa-solid fa-cogs"></i>
+                <span>Мехобработка</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="max-w-screen-2xl mx-auto px-8 py-8">
+        
+        <!-- ==================== ВКЛАДКА ПОКРАСКА ==================== -->
+        <div id="content-paint" class="tab-content">
+            <div class="mb-8">
+                <h2 class="font-display text-4xl font-semibold tracking-tighter text-slate-900">Расход лакокрасочных материалов</h2>
+                <p class="text-slate-600 mt-2 max-w-2xl">Введите геометрические параметры заготовок. Площадь поверхности и расход по всем материалам пересчитываются мгновенно.</p>
+            </div>
+
+            <!-- БЛОК КРУГ -->
+            <div class="section-card bg-white rounded-3xl shadow-sm border border-slate-100 mb-8 overflow-hidden">
+                <div class="px-7 py-4 bg-gradient-to-r from-emerald-50 to-white border-b flex items-center justify-between">
+                    <div class="flex items-center gap-x-3">
+                        <div class="w-9 h-9 bg-emerald-600 text-white rounded-2xl flex items-center justify-center">
+                            <i class="fa-solid fa-circle text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-xl tracking-tight">Круг (цилиндрическая заготовка)</h3>
+                            <p class="text-xs text-emerald-700">Боковая поверхность + 2 торца</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-[10px] text-emerald-600 font-medium tracking-wider">ПЛОЩАДЬ</div>
+                        <div id="krug-area" class="font-mono text-2xl font-semibold text-emerald-700 tabular-nums">0.000</div>
+                        <div class="text-[10px] text-emerald-600 -mt-1">м²</div>
+                    </div>
+                </div>
+                
+                <div class="p-7">
+                    <div class="grid grid-cols-1 xl:grid-cols-5 gap-7">
+                        <!-- Поля ввода -->
+                        <div class="xl:col-span-2">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-emerald-700 tracking-wider mb-1">ДИАМЕТР</label>
+                                    <div class="relative">
+                                        <input id="krug-d" type="number" value="50" step="0.5" 
+                                               class="green-input w-full px-4 py-2.5 text-sm rounded-2xl font-medium">
+                                        <span class="absolute right-4 top-3 text-xs text-emerald-600 font-medium">мм</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-emerald-700 tracking-wider mb-1">ДЛИНА</label>
+                                    <div class="relative">
+                                        <input id="krug-l" type="number" value="250" step="1" 
+                                               class="green-input w-full px-4 py-2.5 text-sm rounded-2xl font-medium">
+                                        <span class="absolute right-4 top-3 text-xs text-emerald-600 font-medium">мм</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-emerald-700 tracking-wider mb-1">КОЛИЧЕСТВО</label>
+                                    <div class="relative">
+                                        <input id="krug-qty" type="number" value="4" step="1" 
+                                               class="green-input w-full px-4 py-2.5 text-sm rounded-2xl font-medium">
+                                        <span class="absolute right-4 top-3 text-xs text-emerald-600 font-medium">шт</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Таблица -->
+                        <div class="xl:col-span-3">
+                            <div class="flex items-center justify-between mb-2 px-1">
+                                <div class="text-xs font-bold text-slate-500 tracking-wider">МАТЕРИАЛ / НОРМА / РАСХОД</div>
+                            </div>
+                            <div class="overflow-x-auto rounded-2xl border border-slate-100">
+                                <table class="w-full text-sm modern-table">
+                                    <thead>
+                                        <tr class="bg-slate-100 text-slate-600 text-xs">
+                                            <th class="text-left font-medium px-4 py-2.5 rounded-tl-2xl">Материал</th>
+                                            <th class="text-center font-medium px-3 py-2.5 w-24">Н/Р (кг/м²)</th>
+                                            <th class="text-right font-medium px-4 py-2.5 rounded-tr-2xl">Расход (кг)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="krug-tbody" class="divide-y divide-slate-100 bg-white text-sm"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- БЛОК ЛИСТ -->
+            <div class="section-card bg-white rounded-3xl shadow-sm border border-slate-100 mb-8 overflow-hidden">
+                <div class="px-7 py-4 bg-gradient-to-r from-emerald-50 to-white border-b flex items-center justify-between">
+                    <div class="flex items-center gap-x-3">
+                        <div class="w-9 h-9 bg-emerald-600 text-white rounded-2xl flex items-center justify-center">
+                            <i class="fa-solid fa-square text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-xl tracking-tight">Лист (пластина / плоская заготовка)</h3>
+                            <p class="text-xs text-emerald-700">2 стороны + 4 кромки (с учетом толщины)</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-[10px] text-emerald-600 font-medium tracking-wider">ПЛОЩАДЬ</div>
+                        <div id="list-area" class="font-mono text-2xl font-semibold text-emerald-700 tabular-nums">0.000</div>
+                        <div class="text-[10px] text-emerald-600 -mt-1">м²</div>
+                    </div>
+                </div>
+                
+                <div class="p-7">
+                    <div class="grid grid-cols-1 xl:grid-cols-5 gap-7">
+                        <div class="xl:col-span-2">
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-emerald-700 tracking-wider mb-1">ШИРИНА</label>
+                                    <div class="relative">
+                                        <input id="list-w" type="number" value="400" step="1" 
+                                               class="green-input w-full px-4 py-2.5 text-sm rounded-2xl font-medium">
+                                        <span class="absolute right-4 top-3 text-xs text-emerald-600 font-medium">мм</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-emerald-700 tracking-wider mb-1">ДЛИНА</label>
+                                    <div class="relative">
+                                        <input id="list-l" type="number" value="600" step="1" 
+                                               class="green-input w-full px-4 py-2.5 text-sm rounded-2xl font-medium">
+                                        <span class="absolute right-4 top-3 text-xs text-emerald-600 font-medium">мм</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-emerald-700 tracking-wider mb-1">ТОЛЩИНА</label>
+                                    <div class="relative">
+                                        <input id="list-t" type="number" value="3" step="0.5" 
+                                               class="green-input w-full px-4 py-2.5 text-sm rounded-2xl font-medium">
+                                        <span class="absolute right-4 top-3 text-xs text-emerald-600 font-medium">мм</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-emerald-700 tracking-wider mb-1">КОЛИЧЕСТВО</label>
+                                    <div class="relative">
+                                        <input id="list-qty" type="number" value="8" step="1" 
+                                               class="green-input w-full px-4 py-2.5 text-sm rounded-2xl font-medium">
+                                        <span class="absolute right-4 top-3 text-xs text-emerald-600 font-medium">шт</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="xl:col-span-3">
+                            <div class="flex items-center justify-between mb-2 px-1">
+                                <div class="text-xs font-bold text-slate-500 tracking-wider">МАТЕРИАЛ / НОРМА / РАСХОД</div>
+                            </div>
+                            <div class="overflow-x-auto rounded-2xl border border-slate-100">
+                                <table class="w-full text-sm modern-table">
+                                    <thead>
+                                        <tr class="bg-slate-100 text-slate-600 text-xs">
+                                            <th class="text-left font-medium px-4 py-2.5 rounded-tl-2xl">Материал</th>
+                                            <th class="text-center font-medium px-3 py-2.5 w-24">Н/Р (кг/м²)</th>
+                                            <th class="text-right font-medium px-4 py-2.5 rounded-tr-2xl">Расход (кг)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="list-tbody" class="divide-y divide-slate-100 bg-white text-sm"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- БЛОК ТРУБА -->
+            <div class="section-card bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                <div class="px-7 py-4 bg-gradient-to-r from-emerald-50 to-white border-b flex items-center justify-between">
+                    <div class="flex items-center gap-x-3">
+                        <div class="w-9 h-9 bg-emerald-600 text-white rounded-2xl flex items-center justify-center">
+                            <i class="fa-solid fa-ring text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-xl tracking-tight">Труба (трубная заготовка)</h3>
+                            <p class="text-xs text-emerald-700">Наружная боковая поверхность</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-[10px] text-emerald-600 font-medium tracking-wider">ПЛОЩАДЬ</div>
+                        <div id="truba-area" class="font-mono text-2xl font-semibold text-emerald-700 tabular-nums">0.000</div>
+                        <div class="text-[10px] text-emerald-600 -mt-1">м²</div>
+                    </div>
+                </div>
+                
+                <div class="p-7">
+                    <div class="grid grid-cols-1 xl:grid-cols-5 gap-7">
+                        <div class="xl:col-span-2">
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-emerald-700 tracking-wider mb-1">ДИАМЕТР (наружн.)</label>
+                                    <div class="relative">
+                                        <input id="truba-d" type="number" value="76" step="0.5" 
+                                               class="green-input w-full px-4 py-2.5 text-sm rounded-2xl font-medium">
+                                        <span class="absolute right-4 top-3 text-xs text-emerald-600 font-medium">мм</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-emerald-700 tracking-wider mb-1">ДЛИНА</label>
+                                    <div class="relative">
+                                        <input id="truba-l" type="number" value="1200" step="1" 
+                                               class="green-input w-full px-4 py-2.5 text-sm rounded-2xl font-medium">
+                                        <span class="absolute right-4 top-3 text-xs text-emerald-600 font-medium">мм</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-emerald-700 tracking-wider mb-1">КОЛИЧЕСТВО</label>
+                                    <div class="relative">
+                                        <input id="truba-qty" type="number" value="2" step="1" 
+                                               class="green-input w-full px-4 py-2.5 text-sm rounded-2xl font-medium">
+                                        <span class="absolute right-4 top-3 text-xs text-emerald-600 font-medium">шт</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="xl:col-span-3">
+                            <div class="flex items-center justify-between mb-2 px-1">
+                                <div class="text-xs font-bold text-slate-500 tracking-wider">МАТЕРИАЛ / НОРМА / РАСХОД</div>
+                            </div>
+                            <div class="overflow-x-auto rounded-2xl border border-slate-100">
+                                <table class="w-full text-sm modern-table">
+                                    <thead>
+                                        <tr class="bg-slate-100 text-slate-600 text-xs">
+                                            <th class="text-left font-medium px-4 py-2.5 rounded-tl-2xl">Материал</th>
+                                            <th class="text-center font-medium px-3 py-2.5 w-24">Н/Р (кг/м²)</th>
+                                            <th class="text-right font-medium px-4 py-2.5 rounded-tr-2xl">Расход (кг)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="truba-tbody" class="divide-y divide-slate-100 bg-white text-sm"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== ВКЛАДКА СВАРКА ==================== -->
+        <div id="content-svarka" class="tab-content hidden">
+            <div class="max-w-4xl">
+                <div class="mb-8">
+                    <h2 class="font-display text-4xl font-semibold tracking-tighter text-slate-900">Расчет расхода сварочной проволоки</h2>
+                    <p class="text-slate-600 mt-2">Угловой шов. Учет угара и разбрызгивания — коэффициент 1.12</p>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-10 gap-y-8">
+                        
+                        <!-- Ввод данных -->
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-2">Марка проволоки</label>
+                                <select id="wire-type" class="w-full px-4 py-3 border border-slate-300 rounded-2xl text-sm focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200">
+                                    <option>Проволока 1.2 Св-08Г2С-О ГОСТ 2246-70</option>
+                                    <option>Проволока 1.6 Св-08Г2С ГОСТ 2246-70</option>
+                                    <option>Проволока 2.0 Св-08Г2С ГОСТ 2246-70</option>
+                                    <option>Проволока 1.2 Св-08А ГОСТ 2246-70</option>
+                                </select>
+                            </div>
+                            
+                            <div class="grid grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Катет шва k</label>
+                                    <div class="relative">
+                                        <input id="svarka-k" type="number" value="5" step="0.5" 
+                                               class="green-input w-full px-4 py-3 text-lg font-semibold rounded-2xl">
+                                        <span class="absolute right-4 top-4 text-xs text-emerald-600 font-bold">мм</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Длина шва L</label>
+                                    <div class="relative">
+                                        <input id="svarka-l" type="number" value="2.8" step="0.1" 
+                                               class="green-input w-full px-4 py-3 text-lg font-semibold rounded-2xl">
+                                        <span class="absolute right-4 top-4 text-xs text-emerald-600 font-bold">м</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-2">Кол-во швов</label>
+                                    <input id="svarka-qty" type="number" value="6" step="1" 
+                                           class="green-input w-full px-4 py-3 text-lg font-semibold rounded-2xl">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Результаты -->
+                        <div class="stat-card rounded-3xl p-7 text-white">
+                            <div class="space-y-7">
+                                <div>
+                                    <div class="metric-label text-emerald-400">Чистый вес наплавленного металла</div>
+                                    <div class="flex items-baseline gap-x-2 mt-1">
+                                        <div id="svarka-m" class="result-value text-6xl font-semibold tabular-nums tracking-tighter">0.185</div>
+                                        <div class="text-emerald-300 text-xl font-medium">кг</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="pt-6 border-t border-white/20">
+                                    <div class="metric-label text-emerald-300">ИТОГОВЫЙ РАСХОД ПРОВОЛОКИ (+12%)</div>
+                                    <div class="flex items-baseline gap-x-2 mt-1">
+                                        <div id="svarka-rashod" class="result-value text-6xl font-semibold tabular-nums tracking-tighter text-emerald-400">0.207</div>
+                                        <div class="text-emerald-300 text-xl font-medium">кг</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-8 text-[10px] text-emerald-300/70 leading-tight">
+                                Формула: F = 0.5 × k² (мм²) → M = F × L × 7.85 × 10⁻³ × N → Расход = M × 1.12
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== ВКЛАДКА МЕХОБРАБОТКА ==================== -->
+        <div id="content-meh" class="tab-content hidden">
+            <div class="max-w-5xl">
+                <div class="mb-8">
+                    <h2 class="font-display text-4xl font-semibold tracking-tighter text-slate-900">Трудоемкость токарной обработки</h2>
+                    <p class="text-slate-600 mt-2">Автоподбор режимов резания с возможностью ручной корректировки</p>
+                </div>
+
+                <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="p-8">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-x-8 gap-y-8">
+                            
+                            <!-- Управление -->
+                            <div class="lg:col-span-5 space-y-6">
+                                
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Материал заготовки</label>
+                                        <select id="meh-material" class="w-full px-4 py-3 border border-slate-300 rounded-2xl text-sm focus:border-emerald-500">
+                                            <option value="Сталь 45">Сталь 45</option>
+                                            <option value="Сталь 40Х">Сталь 40Х</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Операция</label>
+                                        <select id="meh-operation" class="w-full px-4 py-3 border border-slate-300 rounded-2xl text-sm focus:border-emerald-500">
+                                            <option value="Черновое точение">Черновое точение</option>
+                                            <option value="Чистовое точение">Чистовое точение</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Диаметр обработки D</label>
+                                        <div class="relative">
+                                            <input id="meh-d" type="number" value="65" step="0.5" 
+                                                   class="green-input w-full px-4 py-3 text-lg font-semibold rounded-2xl">
+                                            <span class="absolute right-4 top-4 text-xs text-emerald-600 font-bold">мм</span>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Длина обработки L</label>
+                                        <div class="relative">
+                                            <input id="meh-l" type="number" value="85" step="1" 
+                                                   class="green-input w-full px-4 py-3 text-lg font-semibold rounded-2xl">
+                                            <span class="absolute right-4 top-4 text-xs text-emerald-600 font-bold">мм</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Редактируемые режимы -->
+                                <div class="pt-5 border-t border-slate-100">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <div>
+                                            <div class="text-sm font-semibold text-slate-700">Режимы резания</div>
+                                            <div class="text-xs text-amber-600">Автоподбор • можно править вручную</div>
+                                        </div>
+                                        <button onclick="resetRecommended()" 
+                                                class="text-xs px-4 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-medium rounded-2xl flex items-center gap-x-1.5 transition-colors">
+                                            <i class="fa-solid fa-undo text-xs"></i>
+                                            <span>Сбросить</span>
+                                        </button>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label class="text-xs font-medium text-slate-500 block mb-1">Скорость резания Vc</label>
+                                            <div class="relative">
+                                                <input id="meh-vc" type="number" step="1" value="120" 
+                                                       class="green-input w-full px-4 py-2.5 text-xl font-semibold rounded-2xl">
+                                                <span class="absolute right-4 top-3.5 text-xs text-emerald-600 font-bold">м/мин</span>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="text-xs font-medium text-slate-500 block mb-1">Подача f</label>
+                                            <div class="relative">
+                                                <input id="meh-f" type="number" step="0.01" value="0.40" 
+                                                       class="green-input w-full px-4 py-2.5 text-xl font-semibold rounded-2xl">
+                                                <span class="absolute right-4 top-3.5 text-xs text-emerald-600 font-bold">мм/об</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Результаты -->
+                            <div class="lg:col-span-7 bg-slate-900 rounded-3xl p-8 text-white">
+                                <div class="text-emerald-400 text-xs tracking-[2px] font-bold mb-6 flex items-center gap-x-2">
+                                    <i class="fa-solid fa-tachometer-alt"></i> 
+                                    <span>РЕЗУЛЬТАТЫ РАСЧЕТА ТО</span>
+                                </div>
+                                
+                                <div class="space-y-8">
+                                    <!-- n -->
+                                    <div class="flex items-end justify-between">
+                                        <div>
+                                            <div class="text-emerald-300 text-xs tracking-wider font-medium">ОБОРОТЫ ШПИНДЕЛЯ</div>
+                                            <div id="meh-n" class="result-value text-6xl font-semibold tabular-nums tracking-[-2.5px] mt-1">588</div>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="text-emerald-400 text-sm font-medium">об/мин</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Fmin -->
+                                    <div class="flex items-end justify-between pt-6 border-t border-white/10">
+                                        <div>
+                                            <div class="text-emerald-300 text-xs tracking-wider font-medium">МИНУТНАЯ ПОДАЧА F<sub>мин</sub></div>
+                                            <div id="meh-fmin" class="result-value text-6xl font-semibold tabular-nums tracking-[-2.5px] mt-1">235</div>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="text-emerald-400 text-sm font-medium">мм/мин</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- To -->
+                                    <div class="flex items-end justify-between pt-6 border-t border-white/10">
+                                        <div>
+                                            <div class="text-emerald-300 text-xs tracking-wider font-medium">ОСНОВНОЕ ТЕХНОЛОГИЧЕСКОЕ ВРЕМЯ T<sub>о</sub></div>
+                                            <div id="meh-to" class="result-value text-5xl font-semibold tabular-nums tracking-tight mt-1">0 мин 22 сек</div>
+                                        </div>
+                                        <div class="text-right text-emerald-400 text-xs font-medium">мин : сек</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <footer class="max-w-screen-2xl mx-auto px-8 pb-8 text-center">
+        <div class="text-xs text-slate-400">
+            Данные автоматически сохраняются в localStorage • Все расчеты выполняются на стороне клиента
+        </div>
+    </footer>
+
+    <script>
+        // ==================== TAILWIND CONFIG ====================
+        function initTailwind() {
+            document.documentElement.style.setProperty('--accent', '#10b981');
+        }
+
+        // ==================== ДАННЫЕ ====================
+        const materials = [
+            { name: "Эмаль ПФ-115(к)", norm: 0.27 },
+            { name: "Эмаль ПФ-231", norm: 0.13 },
+            { name: "Эмаль ПФ-115(Ж)", norm: 0.15 },
+            { name: "Эмаль ПФ-118", norm: 0.10 },
+            { name: "Лак ЛБС", norm: 0.12 },
+            { name: "Грунтовка ФЛ-03К", norm: 0.09 },
+            { name: "Клей к300-61", norm: 0.35 }
+        ];
+
+        const modes = {
+            "Сталь 45": {
+                "Черновое точение": { vc: 120, f: 0.40 },
+                "Чистовое точение": { vc: 160, f: 0.15 }
+            },
+            "Сталь 40Х": {
+                "Черновое точение": { vc: 102, f: 0.34 },
+                "Чистовое точение": { vc: 136, f: 0.13 }
+            }
+        };
+
+        // ==================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ====================
+        function getKrugArea(d_mm, l_mm) {
+            if (!d_mm || !l_mm || d_mm <= 0 || l_mm <= 0) return 0;
+            const d = d_mm / 1000;
+            const l = l_mm / 1000;
+            const lateral = Math.PI * d * l;
+            const ends = 2 * Math.PI * Math.pow(d / 2, 2);
+            return lateral + ends;
+        }
+
+        function getListArea(w_mm, l_mm, t_mm) {
+            if (!w_mm || !l_mm || w_mm <= 0 || l_mm <= 0) return 0;
+            const w = w_mm / 1000;
+            const l = l_mm / 1000;
+            const t = (t_mm || 0) / 1000;
+            const faces = 2 * w * l;
+            const edges = (2 * w + 2 * l) * t;
+            return faces + edges;
+        }
+
+        function getTrubaArea(d_mm, l_mm) {
+            if (!d_mm || !l_mm || d_mm <= 0 || l_mm <= 0) return 0;
+            const d = d_mm / 1000;
+            const l = l_mm / 1000;
+            // Только наружная боковая поверхность (для трубы)
+            return Math.PI * d * l;
+        }
+
+        function formatArea(area) {
+            return area.toFixed(3);
+        }
+
+        // ==================== СОЗДАНИЕ ТАБЛИЦ ====================
+        function createMaterialTable(tbodyId, prefix) {
+            const tbody = document.getElementById(tbodyId);
+            if (!tbody) return;
+            
+            tbody.innerHTML = '';
+            
+            materials.forEach((mat, index) => {
+                const row = document.createElement('tr');
+                row.className = 'hover:bg-emerald-50/40 transition-colors';
+                
+                row.innerHTML = `
+                    <td class="px-4 py-3 text-slate-700 font-medium">${mat.name}</td>
+                    <td class="px-3 py-3 text-center font-mono text-emerald-700 font-semibold">${mat.norm}</td>
+                    <td id="${prefix}-rashod-${index}" 
+                        class="px-4 py-3 text-right font-mono font-bold text-emerald-700 tabular-nums">0.000</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // ==================== ПЕРЕСЧЕТ ПОКРАСКИ ====================
+        function recalcPaintBlock(blockType) {
+            let area = 0;
+            let qty = 1;
+            let areaElId = '';
+            
+            if (blockType === 'krug') {
+                const d = parseFloat(document.getElementById('krug-d').value) || 0;
+                const l = parseFloat(document.getElementById('krug-l').value) || 0;
+                qty = parseFloat(document.getElementById('krug-qty').value) || 1;
+                area = getKrugArea(d, l);
+                areaElId = 'krug-area';
+            } 
+            else if (blockType === 'list') {
+                const w = parseFloat(document.getElementById('list-w').value) || 0;
+                const l = parseFloat(document.getElementById('list-l').value) || 0;
+                const t = parseFloat(document.getElementById('list-t').value) || 0;
+                qty = parseFloat(document.getElementById('list-qty').value) || 1;
+                area = getListArea(w, l, t);
+                areaElId = 'list-area';
+            } 
+            else if (blockType === 'truba') {
+                const d = parseFloat(document.getElementById('truba-d').value) || 0;
+                const l = parseFloat(document.getElementById('truba-l').value) || 0;
+                qty = parseFloat(document.getElementById('truba-qty').value) || 1;
+                area = getTrubaArea(d, l);
+                areaElId = 'truba-area';
+            }
+            
+            // Обновляем отображение площади
+            if (areaElId) {
+                const areaContainer = document.getElementById(areaElId);
+                if (areaContainer) {
+                    areaContainer.textContent = formatArea(area);
+                }
+            }
+            
+            // Пересчитываем расход для всех материалов
+            materials.forEach((mat, idx) => {
+                const rashod = area * qty * mat.norm;
+                const cell = document.getElementById(`${blockType}-rashod-${idx}`);
+                if (cell) {
+                    cell.textContent = rashod.toFixed(3);
+                }
+            });
+        }
+
+        function attachPaintListeners() {
+            // Круг
+            ['krug-d', 'krug-l', 'krug-qty'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', () => {
+                        recalcPaintBlock('krug');
+                        saveToLocalStorage();
+                    });
+                }
+            });
+            
+            // Лист
+            ['list-w', 'list-l', 'list-t', 'list-qty'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', () => {
+                        recalcPaintBlock('list');
+                        saveToLocalStorage();
+                    });
+                }
+            });
+            
+            // Труба
+            ['truba-d', 'truba-l', 'truba-qty'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', () => {
+                        recalcPaintBlock('truba');
+                        saveToLocalStorage();
+                    });
+                }
+            });
+        }
+
+        // ==================== СВАРКА ====================
+        function recalcSvarka() {
+            const k = parseFloat(document.getElementById('svarka-k').value) || 0;
+            const L = parseFloat(document.getElementById('svarka-l').value) || 0;
+            const qty = parseFloat(document.getElementById('svarka-qty').value) || 1;
+            
+            const F = 0.5 * k * k;                    // мм²
+            const M = F * L * 7.85e-3 * qty;          // кг (чистый)
+            const rashod = M * 1.12;                  // с учетом угара
+            
+            const mEl = document.getElementById('svarka-m');
+            const rashodEl = document.getElementById('svarka-rashod');
+            
+            if (mEl) mEl.textContent = M.toFixed(3);
+            if (rashodEl) rashodEl.textContent = rashod.toFixed(3);
+        }
+
+        function attachSvarkaListeners() {
+            const ids = ['svarka-k', 'svarka-l', 'svarka-qty', 'wire-type'];
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    const eventType = (id === 'wire-type') ? 'change' : 'input';
+                    el.addEventListener(eventType, () => {
+                        recalcSvarka();
+                        saveToLocalStorage();
+                    });
+                }
+            });
+        }
+
+        // ==================== МЕХОБРАБОТКА ====================
+        function updateRecommended() {
+            const mat = document.getElementById('meh-material').value;
+            const op = document.getElementById('meh-operation').value;
+            
+            const base = modes[mat] && modes[mat][op];
+            if (!base) return;
+            
+            const vcInput = document.getElementById('meh-vc');
+            const fInput = document.getElementById('meh-f');
+            
+            if (vcInput) vcInput.value = base.vc;
+            if (fInput) fInput.value = base.f;
+            
+            recalcMeh();
+        }
+
+        function resetRecommended() {
+            updateRecommended();
+            saveToLocalStorage();
+        }
+
+        function recalcMeh() {
+            const d = parseFloat(document.getElementById('meh-d').value) || 0;
+            const l = parseFloat(document.getElementById('meh-l').value) || 0;
+            const vc = parseFloat(document.getElementById('meh-vc').value) || 0;
+            const f = parseFloat(document.getElementById('meh-f').value) || 0;
+            
+            const nEl = document.getElementById('meh-n');
+            const fminEl = document.getElementById('meh-fmin');
+            const toEl = document.getElementById('meh-to');
+            
+            if (!nEl || !fminEl || !toEl) return;
+            
+            if (d <= 0 || vc <= 0 || f <= 0) {
+                nEl.textContent = '—';
+                fminEl.textContent = '—';
+                toEl.textContent = '—';
+                return;
+            }
+            
+            // n = 1000 * Vc / (π * D)
+            const n = (1000 * vc) / (Math.PI * d);
+            
+            // Fмин = f * n
+            const fmin = f * n;
+            
+            // To = L / Fмин (минуты)
+            let toMin = 0;
+            if (fmin > 0) {
+                toMin = l / fmin;
+            }
+            
+            // Форматирование
+            nEl.textContent = n.toFixed(0);
+            fminEl.textContent = fmin.toFixed(0);
+            
+            const minutes = Math.floor(toMin);
+            const seconds = Math.round((toMin - minutes) * 60);
+            toEl.textContent = `${minutes} мин ${seconds} сек`;
+        }
+
+        function attachMehListeners() {
+            // Селекты материала и операции → автоподбор + пересчет
+            ['meh-material', 'meh-operation'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('change', () => {
+                        updateRecommended();
+                        saveToLocalStorage();
+                    });
+                }
+            });
+            
+            // Ввод D, L, Vc, f → только пересчет
+            ['meh-d', 'meh-l', 'meh-vc', 'meh-f'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', () => {
+                        recalcMeh();
+                        saveToLocalStorage();
+                    });
+                }
+            });
+        }
+
+        // ==================== LOCALSTORAGE ====================
+        function saveToLocalStorage() {
+            const data = {};
+            const allFields = document.querySelectorAll('input[id], select[id]');
+            
+            allFields.forEach(el => {
+                if (el.id) {
+                    data[el.id] = el.value;
+                }
+            });
+            
+            localStorage.setItem('tech_calc_data_v2', JSON.stringify(data));
+        }
+
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem('tech_calc_data_v2');
+            if (!saved) return false;
+            
+            try {
+                const data = JSON.parse(saved);
+                let restored = false;
+                
+                Object.keys(data).forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && data[id] !== undefined) {
+                        el.value = data[id];
+                        restored = true;
+                    }
+                });
+                
+                return restored;
+            } catch (e) {
+                console.warn('Ошибка загрузки из localStorage');
+                return false;
+            }
+        }
+
+        function recalcAll() {
+            recalcPaintBlock('krug');
+            recalcPaintBlock('list');
+            recalcPaintBlock('truba');
+            recalcSvarka();
+            recalcMeh();
+        }
+
+        // ==================== ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ====================
+        function switchTab(tab) {
+            // Скрываем все
+            document.querySelectorAll('.tab-content').forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            // Показываем нужную
+            const content = document.getElementById(`content-${tab}`);
+            if (content) content.classList.remove('hidden');
+            
+            // Обновляем активные кнопки
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active', 'border-b-2', 'border-emerald-600', 'text-emerald-600');
+                btn.classList.add('text-slate-600');
+            });
+            
+            const activeBtn = document.getElementById(`tab-btn-${tab}`);
+            if (activeBtn) {
+                activeBtn.classList.add('active', 'border-b-2', 'border-emerald-600', 'text-emerald-600');
+                activeBtn.classList.remove('text-slate-600');
+            }
+        }
+
+        // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+        function initializeApp() {
+            initTailwind();
+            
+            // Создаем таблицы материалов
+            createMaterialTable('krug-tbody', 'krug');
+            createMaterialTable('list-tbody', 'list');
+            createMaterialTable('truba-tbody', 'truba');
+            
+            // Прикрепляем слушатели событий
+            attachPaintListeners();
+            attachSvarkaListeners();
+            attachMehListeners();
+            
+            // Загружаем сохраненные данные
+            const hadSavedData = loadFromLocalStorage();
+            
+            // Если нет сохраненных данных — устанавливаем хорошие значения по умолчанию
+            if (!hadSavedData) {
+                // Уже заданы в HTML, но на всякий случай
+                const defaults = {
+                    'krug-d': '50', 'krug-l': '250', 'krug-qty': '4',
+                    'list-w': '400', 'list-l': '600', 'list-t': '3', 'list-qty': '8',
+                    'truba-d': '76', 'truba-l': '1200', 'truba-qty': '2',
+                    'svarka-k': '5', 'svarka-l': '2.8', 'svarka-qty': '6',
+                    'meh-material': 'Сталь 45', 'meh-operation': 'Черновое точение',
+                    'meh-d': '65', 'meh-l': '85', 'meh-vc': '120', 'meh-f': '0.40'
+                };
+                
+                Object.keys(defaults).forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el && !el.value) el.value = defaults[id];
+                });
+            }
+            
+            // Первичный пересчет всех блоков
+            setTimeout(() => {
+                recalcAll();
+                
+                // Для мехобработки: если только что загрузили дефолт — можно обновить recommended
+                // Но если были сохраненные значения — оставляем их (даже если ручные)
+                const vcEl = document.getElementById('meh-vc');
+                if (vcEl && parseFloat(vcEl.value) === 120) {
+                    // Похоже на дефолт — обновим в соответствии с текущими селектами
+                    // updateRecommended(); // закомментировано, чтобы не затирать ручные изменения
+                }
+            }, 80);
+            
+            // Стартуем на вкладке Покраска
+            switchTab('paint');
+            
+            // Горячая клавиша для сброса (опционально)
+            document.addEventListener('keydown', function(e) {
+                if (e.key === '?' && document.activeElement.tagName === 'BODY') {
+                    e.preventDefault();
+                    if (confirm('Сбросить все данные калькулятора?')) {
+                        localStorage.removeItem('tech_calc_data_v2');
+                        location.reload();
+                    }
+                }
+            });
+            
+            // Финальное сообщение в консоль
+            console.log('%c[Калькулятор технолога] Приложение инициализировано. Автосохранение активно.', 'color:#10b981');
+        }
+
+        // Запуск
+        window.onload = initializeApp;
+    </script>
+</body>
+</html>

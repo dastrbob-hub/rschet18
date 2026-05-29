@@ -57,6 +57,17 @@
             background-color: #1f1812;
             border: 1px solid #8b5e3c;
         }
+        
+        .norms-table {
+            background-color: #1f1812;
+            border: 1px solid #8b5e3c;
+        }
+        
+        .norms-table th {
+            background-color: #2c2118;
+            color: #c9a227;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body class="bg-[#1a120b] text-[#e8d5b7]">
@@ -102,6 +113,44 @@
         <div id="paint" class="tech-card rounded-3xl p-8">
             <h2 class="section-header text-3xl text-[#c9a227] mb-6">Расход лакокрасочных материалов</h2>
             
+            <!-- Таблица норм -->
+            <div class="mb-8">
+                <h3 class="font-semibold mb-4 text-[#c9a227]">Нормы расхода с учётом метода нанесения</h3>
+                <div class="overflow-x-auto">
+                    <table class="norms-table w-full rounded-2xl overflow-hidden text-sm">
+                        <thead>
+                            <tr>
+                                <th class="px-6 py-3 text-left">Материал</th>
+                                <th class="px-6 py-3 text-center">Н/Р</th>
+                                <th class="px-6 py-3 text-center">Расход, кг/м²</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-[#8b5e3c]/30">
+                            <tr>
+                                <td class="px-6 py-3">Эмаль ПФ-115</td>
+                                <td class="px-6 py-3 text-center font-mono">0.12</td>
+                                <td class="px-6 py-3 text-center font-mono text-[#c9a227]">0.14</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-3">Грунт ГФ-021</td>
+                                <td class="px-6 py-3 text-center font-mono">0.08</td>
+                                <td class="px-6 py-3 text-center font-mono text-[#c9a227]">0.10</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-3">Эпоксидная эмаль</td>
+                                <td class="px-6 py-3 text-center font-mono">0.15</td>
+                                <td class="px-6 py-3 text-center font-mono text-[#c9a227]">0.18</td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-3">Полиуретановая краска</td>
+                                <td class="px-6 py-3 text-center font-mono">0.10</td>
+                                <td class="px-6 py-3 text-center font-mono text-[#c9a227]">0.12</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Круг -->
                 <div class="bg-[#1f1812] p-6 rounded-2xl">
@@ -116,7 +165,7 @@
                         <button onclick="calcPaintCircle()" class="gold-btn w-full py-3 rounded-2xl font-semibold">
                             Рассчитать
                         </button>
-                        <div id="circle_result" class="result-box p-4 rounded-xl text-sm min-h-[60px]"></div>
+                        <div id="circle_result" class="result-box p-4 rounded-xl text-sm min-h-[70px]"></div>
                     </div>
                 </div>
 
@@ -133,7 +182,7 @@
                         <button onclick="calcPaintSheet()" class="gold-btn w-full py-3 rounded-2xl font-semibold">
                             Рассчитать
                         </button>
-                        <div id="sheet_result" class="result-box p-4 rounded-xl text-sm min-h-[60px]"></div>
+                        <div id="sheet_result" class="result-box p-4 rounded-xl text-sm min-h-[70px]"></div>
                     </div>
                 </div>
 
@@ -150,7 +199,7 @@
                         <button onclick="calcPaintPipe()" class="gold-btn w-full py-3 rounded-2xl font-semibold">
                             Рассчитать
                         </button>
-                        <div id="pipe_result" class="result-box p-4 rounded-xl text-sm min-h-[60px]"></div>
+                        <div id="pipe_result" class="result-box p-4 rounded-xl text-sm min-h-[70px]"></div>
                     </div>
                 </div>
             </div>
@@ -171,9 +220,7 @@
                         Рассчитать с учётом угара (×1.12)
                     </button>
                     
-                    <div id="weld_result" class="result-box p-6 rounded-2xl mt-4">
-                        <div class="text-sm text-[#8b5e3c]">Результат появится здесь</div>
-                    </div>
+                    <div id="weld_result" class="result-box p-6 rounded-2xl mt-4"></div>
                 </div>
             </div>
         </div>
@@ -236,15 +283,12 @@
 
     <script>
         function showTab(tab) {
-            // Скрываем все
             document.getElementById('paint').classList.add('hidden');
             document.getElementById('weld').classList.add('hidden');
             document.getElementById('mech').classList.add('hidden');
             
-            // Показываем нужный
             document.getElementById(tab).classList.remove('hidden');
             
-            // Обновляем стиль кнопок
             document.getElementById('tab-paint').className = 'px-8 py-3 rounded-2xl flex items-center gap-x-2 transition-colors ' + (tab === 'paint' ? 'bg-[#c9a227] text-[#1a120b] font-semibold' : 'bg-[#3a2a20] hover:bg-[#4a3a30]');
             document.getElementById('tab-weld').className = 'px-8 py-3 rounded-2xl flex items-center gap-x-2 transition-colors ' + (tab === 'weld' ? 'bg-[#c9a227] text-[#1a120b] font-semibold' : 'bg-[#3a2a20] hover:bg-[#4a3a30]');
             document.getElementById('tab-mech').className = 'px-8 py-3 rounded-2xl flex items-center gap-x-2 transition-colors ' + (tab === 'mech' ? 'bg-[#c9a227] text-[#1a120b] font-semibold' : 'bg-[#3a2a20] hover:bg-[#4a3a30]');
@@ -260,8 +304,8 @@
                 return;
             }
             
-            const area = (Math.PI * d * l) / 1000000; // м²
-            const consumption = area * 0.25 * qty; // примерный коэффициент
+            const area = (Math.PI * d * l) / 1000000;
+            const consumption = area * 0.25 * qty;
             
             document.getElementById('circle_result').innerHTML = `
                 <div class="text-[#8b5e3c]">Площадь поверхности:</div>
@@ -340,16 +384,9 @@
             const fz = parseFloat(document.getElementById('mech_f').value) || 0.1;
             const z = parseFloat(document.getElementById('mech_z').value) || 4;
             
-            // Обороты шпинделя
             const n = Math.round((v * 1000) / (Math.PI * d));
-            
-            // Минутная подача
             const f = (fz * z * n).toFixed(1);
-            
-            // Основное время (To)
             const to = (60 / (fz * z * n)).toFixed(2);
-            
-            // Штучно-калькуляционное время (Tшк)
             const tshk = (parseFloat(to) * 1.15).toFixed(2);
             
             document.getElementById('n_result').textContent = n + ' об/мин';
@@ -358,7 +395,6 @@
             document.getElementById('tshk_result').textContent = tshk + ' мин';
         }
 
-        // По умолчанию показываем раздел покраски
         window.onload = function() {
             document.getElementById('paint').classList.remove('hidden');
             document.getElementById('tab-paint').className = 'px-8 py-3 rounded-2xl bg-[#c9a227] text-[#1a120b] font-semibold flex items-center gap-x-2';

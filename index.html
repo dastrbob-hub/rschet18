@@ -1,1 +1,189 @@
-ПОЛНЫЙ ПЕРЕРАБОТАННЫЙ HTML В СТИЛЕ ХАБА
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Калькулятор Технолога • Покраска • Сварка • Мехобработка</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Playfair+Display:wght@400;500&family=Inter:wght@300;400;500&display=swap');
+body { font-family: 'Inter', system-ui, sans-serif; background-color: #1a120b; color: #e8d5b7; }
+.title-font { font-family: 'Cinzel', serif; letter-spacing: 1px; }
+.tech-card { background-color: #2c2118; border: 2px solid #8b5e3c; }
+.tech-input { background-color: #1f1812; border: 1px solid #8b5e3c; color: #e8d5b7; }
+.tech-input:focus { border-color: #c9a227; outline: none; }
+.gold-btn { background-color: #c9a227; color: #1a120b; }
+.gold-btn:hover { background-color: #d4af37; }
+</style>
+</head>
+<body class="bg-[#1a120b] text-[#e8d5b7]">
+<div class="max-w-6xl mx-auto p-8">
+    <div class="flex items-center gap-x-4 mb-8">
+        <div class="w-12 h-12 bg-[#c9a227] rounded-xl flex items-center justify-center">
+            <i class="fa-solid fa-hammer text-[#1a120b] text-3xl"></i>
+        </div>
+        <div>
+            <h1 class="text-4xl font-bold title-font text-[#c9a227]">Калькулятор Технолога</h1>
+            <p class="text-[#8b5e3c]">Покраска • Сварка • Механическая обработка</p>
+        </div>
+    </div>
+
+    <!-- Вкладки -->
+    <div class="flex gap-2 mb-6">
+        <button onclick="showTab('paint')" class="px-6 py-2.5 rounded-2xl bg-[#c9a227] text-[#1a120b] font-semibold">Покраска</button>
+        <button onclick="showTab('weld')" class="px-6 py-2.5 rounded-2xl bg-[#3a2a20] hover:bg-[#4a3a30]">Сварка</button>
+        <button onclick="showTab('mech')" class="px-6 py-2.5 rounded-2xl bg-[#3a2a20] hover:bg-[#4a3a30]">Мехобработка</button>
+    </div>
+
+    <!-- Покраска -->
+    <div id="paint" class="tech-card rounded-3xl p-8">
+        <h2 class="text-2xl font-semibold mb-6 text-[#c9a227]">Расход лакокрасочных материалов</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Круг -->
+            <div class="bg-[#1f1812] p-6 rounded-2xl">
+                <h3 class="font-semibold mb-4">Круг (цилиндр)</h3>
+                <div class="space-y-3">
+                    <input type="number" id="circle_d" placeholder="Диаметр, мм" class="tech-input w-full px-4 py-2 rounded-xl">
+                    <input type="number" id="circle_l" placeholder="u0414лина, мм" class="tech-input w-full px-4 py-2 rounded-xl">
+                    <input type="number" id="circle_qty" placeholder="Кол-во, шт" class="tech-input w-full px-4 py-2 rounded-xl">
+                    <button onclick="calcPaintCircle()" class="gold-btn w-full py-2.5 rounded-2xl font-semibold">Рассчитать</button>
+                    <div id="circle_result" class="text-sm text-[#c9a227] mt-2"></div>
+                </div>
+            </div>
+
+            <!-- Лист -->
+            <div class="bg-[#1f1812] p-6 rounded-2xl">
+                <h3 class="font-semibold mb-4">Лист (пластина)</h3>
+                <div class="space-y-3">
+                    <input type="number" id="sheet_l" placeholder="u0414лина, мм" class="tech-input w-full px-4 py-2 rounded-xl">
+                    <input type="number" id="sheet_w" placeholder="u0428ирина, мм" class="tech-input w-full px-4 py-2 rounded-xl">
+                    <input type="number" id="sheet_qty" placeholder="Кол-во, шт" class="tech-input w-full px-4 py-2 rounded-xl">
+                    <button onclick="calcPaintSheet()" class="gold-btn w-full py-2.5 rounded-2xl font-semibold">Рассчитать</button>
+                    <div id="sheet_result" class="text-sm text-[#c9a227] mt-2"></div>
+                </div>
+            </div>
+
+            <!-- Труба -->
+            <div class="bg-[#1f1812] p-6 rounded-2xl">
+                <h3 class="font-semibold mb-4">Труба</h3>
+                <div class="space-y-3">
+                    <input type="number" id="pipe_d" placeholder="u0414иаметр, мм" class="tech-input w-full px-4 py-2 rounded-xl">
+                    <input type="number" id="pipe_l" placeholder="u0414лина, мм" class="tech-input w-full px-4 py-2 rounded-xl">
+                    <input type="number" id="pipe_qty" placeholder="Кол-во, шт" class="tech-input w-full px-4 py-2 rounded-xl">
+                    <button onclick="calcPaintPipe()" class="gold-btn w-full py-2.5 rounded-2xl font-semibold">Рассчитать</button>
+                    <div id="pipe_result" class="text-sm text-[#c9a227] mt-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Сварка -->
+    <div id="weld" class="tech-card rounded-3xl p-8 hidden">
+        <h2 class="text-2xl font-semibold mb-6 text-[#c9a227]">Расчёт расхода сварочной проволоки</h2>
+        
+        <div class="max-w-md">
+            <div class="space-y-4">
+                <div>
+                    <label class="text-sm text-[#8b5e3c]">Чистый вес наплавки, кг</label>
+                    <input type="number" id="weld_weight" class="tech-input w-full px-4 py-2.5 rounded-2xl mt-1">
+                </div>
+                <button onclick="calcWeld()" class="gold-btn w-full py-3 rounded-2xl font-semibold">Рассчитать (+12% угар)</button>
+                <div id="weld_result" class="mt-4 p-4 bg-[#1f1812] rounded-2xl text-[#c9a227]"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Мехобработка -->
+    <div id="mech" class="tech-card rounded-3xl p-8 hidden">
+        <h2 class="text-2xl font-semibold mb-6 text-[#c9a227]">Трудоёмкость механической обработки</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <div class="space-y-4">
+                    <input type="number" id="mech_d" placeholder="u0414иаметр инструмента, мм" class="tech-input w-full px-4 py-2.5 rounded-2xl">
+                    <input type="number" id="mech_v" placeholder="u0421корость резания V, м/мин" class="tech-input w-full px-4 py-2.5 rounded-2xl">
+                    <input type="number" id="mech_f" placeholder="u041fодача на зуб fz, мм/зуб" class="tech-input w-full px-4 py-2.5 rounded-2xl">
+                    <input type="number" id="mech_z" placeholder="u041aол-во зубьев" class="tech-input w-full px-4 py-2.5 rounded-2xl">
+                    <button onclick="calcMech()" class="gold-btn w-full py-3 rounded-2xl font-semibold">Рассчитать режимы</button>
+                </div>
+            </div>
+            
+            <div class="bg-[#1f1812] p-6 rounded-2xl">
+                <div class="space-y-3 text-sm">
+                    <div>Обороты шпинделя <span id="n_result" class="font-mono text-[#c9a227]"></span> об/мин</div>
+                    <div>Минутная подача <span id="f_result" class="font-mono text-[#c9a227]"></span> мм/мин</div>
+                    <div>Основное время To <span id="to_result" class="font-mono text-[#c9a227]"></span> мин</div>
+                    <div class="pt-2 border-t border-[#8b5e3c]">Штучно-калькуляционное время <span id="tshk_result" class="font-mono text-[#c9a227] text-lg"></span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function showTab(tab) {
+    document.getElementById('paint').classList.add('hidden');
+    document.getElementById('weld').classList.add('hidden');
+    document.getElementById('mech').classList.add('hidden');
+    document.getElementById(tab).classList.remove('hidden');
+}
+
+function calcPaintCircle() {
+    const d = parseFloat(document.getElementById('circle_d').value) || 0;
+    const l = parseFloat(document.getElementById('circle_l').value) || 0;
+    const qty = parseFloat(document.getElementById('circle_qty').value) || 1;
+    
+    const area = Math.PI * d * l / 1000000; // m²
+    const result = (area * 0.25 * qty).toFixed(3); // примерный расход
+    document.getElementById('circle_result').innerHTML = `Площадь: ${area.toFixed(3)} м²<br>Расход примерно: <b>${result} кг</b>`;
+}
+
+function calcPaintSheet() {
+    const l = parseFloat(document.getElementById('sheet_l').value) || 0;
+    const w = parseFloat(document.getElementById('sheet_w').value) || 0;
+    const qty = parseFloat(document.getElementById('sheet_qty').value) || 1;
+    
+    const area = l * w / 1000000;
+    const result = (area * 0.22 * qty).toFixed(3);
+    document.getElementById('sheet_result').innerHTML = `Площадь: ${area.toFixed(3)} м²<br>Расход примерно: <b>${result} кг</b>`;
+}
+
+function calcPaintPipe() {
+    const d = parseFloat(document.getElementById('pipe_d').value) || 0;
+    const l = parseFloat(document.getElementById('pipe_l').value) || 0;
+    const qty = parseFloat(document.getElementById('pipe_qty').value) || 1;
+    
+    const area = Math.PI * d * l / 1000000;
+    const result = (area * 0.28 * qty).toFixed(3);
+    document.getElementById('pipe_result').innerHTML = `Площадь: ${area.toFixed(3)} м²<br>Расход примерно: <b>${result} кг</b>`;
+}
+
+function calcWeld() {
+    const weight = parseFloat(document.getElementById('weld_weight').value) || 0;
+    const total = (weight * 1.12).toFixed(3);
+    document.getElementById('weld_result').innerHTML = `Чистый вес: ${weight} кг<br>Итоговый расход (+12% угар): <b>${total} кг</b>`;
+}
+
+function calcMech() {
+    const d = parseFloat(document.getElementById('mech_d').value) || 10;
+    const v = parseFloat(document.getElementById('mech_v').value) || 80;
+    const fz = parseFloat(document.getElementById('mech_f').value) || 0.1;
+    const z = parseFloat(document.getElementById('mech_z').value) || 4;
+    
+    const n = Math.round((v * 1000) / (Math.PI * d));
+    const f = (fz * z * n).toFixed(1);
+    const to = (60 / (fz * z * n)).toFixed(2);
+    
+    document.getElementById('n_result').textContent = n;
+    document.getElementById('f_result').textContent = f;
+    document.getElementById('to_result').textContent = to;
+    document.getElementById('tshk_result').textContent = (parseFloat(to) * 1.15).toFixed(2) + ' мин';
+}
+
+// По умолчанию показываем покраску
+window.onload = () => {
+    document.getElementById('paint').classList.remove('hidden');
+};
+</script>
+</body>
+</html>
